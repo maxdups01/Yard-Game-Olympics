@@ -1,0 +1,776 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  #ygo {
+    --turf-dark: #1F3B22;
+    --turf-mid: #2E5230;
+    --turf-light: #4C7A3F;
+    --chalk: #F6F3E9;
+    --scoreboard: #14160F;
+    --flag-yellow: #E9B93B;
+    --court-red: #C1443C;
+    --line-white: #EDEAE0;
+
+    font-family: 'Work Sans', sans-serif;
+    background: var(--chalk);
+    color: var(--scoreboard);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  #ygo * { box-sizing: border-box; }
+  #ygo h1, #ygo h2, #ygo h3 { font-family: 'Anton', sans-serif; font-weight: 400; letter-spacing: 0.02em; margin: 0; }
+  #ygo .mono { font-family: 'Space Mono', monospace; }
+
+  #ygo button {
+    font-family: 'Work Sans', sans-serif;
+    cursor: pointer;
+    border: none;
+  }
+  #ygo button:focus-visible,
+  #ygo input:focus-visible,
+  #ygo [tabindex]:focus-visible {
+    outline: 3px solid var(--flag-yellow);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #ygo * { animation: none !important; transition: none !important; }
+  }
+
+  /* ---------- Hero ---------- */
+  #ygo .hero {
+    position: relative;
+    padding: 64px 24px 88px;
+    text-align: center;
+    color: var(--chalk);
+    background:
+      repeating-linear-gradient(
+        135deg,
+        var(--turf-dark) 0px, var(--turf-dark) 46px,
+        var(--turf-mid) 46px, var(--turf-mid) 92px
+      );
+    overflow: hidden;
+  }
+  #ygo .hero::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 10px;
+    background: repeating-linear-gradient(90deg, var(--line-white) 0 28px, transparent 28px 56px);
+    opacity: 0.85;
+  }
+  #ygo .hero .eyebrow {
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: var(--flag-yellow);
+    margin-bottom: 18px;
+  }
+  #ygo .hero h1 {
+    font-size: clamp(40px, 8vw, 84px);
+    line-height: 0.95;
+    text-shadow: 3px 3px 0 var(--scoreboard);
+  }
+  #ygo .hero p {
+    max-width: 560px;
+    margin: 20px auto 0;
+    font-size: 17px;
+    color: var(--line-white);
+  }
+
+  /* ---------- Layout shell ---------- */
+  #ygo .wrap { max-width: 980px; margin: 0 auto; padding: 0 20px; }
+  #ygo .card {
+    background: #fff;
+    border: 2px solid var(--scoreboard);
+    border-radius: 4px;
+    padding: 28px;
+    margin-top: -48px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 6px 6px 0 var(--turf-dark);
+  }
+  #ygo .setup-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+  @media (max-width: 700px) {
+    #ygo .setup-grid { grid-template-columns: 1fr; }
+  }
+  #ygo .field-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--turf-mid);
+    display: block;
+    margin-bottom: 8px;
+  }
+  #ygo .helptext { font-size: 13px; color: #5b5b52; margin-top: 6px; }
+
+  #ygo input[type="number"],
+  #ygo input[type="text"] {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 12px;
+    border: 2px solid #d8d3c3;
+    border-radius: 3px;
+    font-family: 'Work Sans', sans-serif;
+    background: var(--chalk);
+  }
+  #ygo input:focus { border-color: var(--turf-mid); }
+
+  #ygo .radio-row { display: flex; gap: 18px; margin-bottom: 10px; }
+  #ygo .radio-row label { display: flex; align-items: center; gap: 6px; font-size: 14px; cursor: pointer; }
+
+  #ygo .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; min-height: 20px; }
+  #ygo .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--turf-dark); color: var(--chalk);
+    padding: 6px 8px 6px 12px; border-radius: 999px; font-size: 13px;
+  }
+  #ygo .chip button {
+    background: transparent; color: var(--chalk); font-size: 15px; line-height: 1;
+    border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+  }
+  #ygo .chip button:hover { background: rgba(255,255,255,0.2); }
+  #ygo .add-row { display: flex; gap: 8px; }
+  #ygo .add-row button {
+    background: var(--scoreboard); color: var(--chalk); padding: 10px 16px; border-radius: 3px; font-weight: 600; font-size: 14px; white-space: nowrap;
+  }
+  #ygo .add-row button:hover { background: var(--turf-dark); }
+
+  #ygo .generate-btn {
+    margin-top: 26px;
+    width: 100%;
+    background: var(--flag-yellow);
+    color: var(--scoreboard);
+    font-family: 'Anton', sans-serif;
+    font-size: 22px;
+    letter-spacing: 0.03em;
+    padding: 16px;
+    border-radius: 4px;
+    border: 2px solid var(--scoreboard);
+    box-shadow: 4px 4px 0 var(--scoreboard);
+    transition: transform 0.1s ease;
+  }
+  #ygo .generate-btn:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--scoreboard); }
+  #ygo .generate-btn:active { transform: translate(0, 0); box-shadow: 2px 2px 0 var(--scoreboard); }
+  #ygo .generate-btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; transform: none; }
+
+  #ygo .error-msg {
+    background: #fbeae8; border: 2px solid var(--court-red); color: #7a231c;
+    padding: 10px 14px; border-radius: 3px; font-size: 14px; margin-top: 14px;
+  }
+
+  /* ---------- Results ---------- */
+  #ygo .results { margin-top: 40px; padding-bottom: 60px; }
+  #ygo .status-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 22px; }
+  #ygo .status-pill {
+    font-family: 'Space Mono', monospace;
+    font-size: 12.5px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  #ygo .status-pill.ok { background: #e4efe0; color: var(--turf-dark); border: 1px solid var(--turf-mid); }
+  #ygo .status-pill.warn { background: #fbeae8; color: #7a231c; border: 1px solid var(--court-red); }
+  #ygo .status-pill.info { background: #fdf3dd; color: #7a5b12; border: 1px solid var(--flag-yellow); }
+
+  #ygo .tabs { display: flex; gap: 4px; border-bottom: 2px solid var(--scoreboard); margin-bottom: 0; flex-wrap: wrap; }
+  #ygo .tab-btn {
+    background: transparent; padding: 10px 18px; font-size: 14px; font-weight: 600;
+    color: #6b675c; border-radius: 4px 4px 0 0; font-family: 'Work Sans', sans-serif;
+  }
+  #ygo .tab-btn.active { background: var(--scoreboard); color: var(--chalk); }
+  #ygo .tab-btn:not(.active):hover { background: #eee9d9; }
+
+  #ygo .board {
+    background: var(--scoreboard);
+    padding: 18px;
+    border-radius: 0 4px 4px 4px;
+    overflow-x: auto;
+  }
+  #ygo table { border-collapse: collapse; width: 100%; font-size: 13.5px; color: var(--chalk); }
+  #ygo th, #ygo td {
+    padding: 9px 12px;
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid #33362a;
+  }
+  #ygo th {
+    font-family: 'Space Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 11px;
+    color: var(--flag-yellow);
+    position: sticky; top: 0; background: var(--scoreboard);
+  }
+  #ygo td.num { font-family: 'Space Mono', monospace; text-align: center; }
+  #ygo tbody tr:nth-child(odd) td { background: #1c1f16; }
+  #ygo tbody tr:hover td { background: var(--turf-dark); }
+  #ygo td.rowhead { font-family: 'Space Mono', monospace; color: var(--flag-yellow); }
+
+  #ygo .board-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 18px; flex-wrap: wrap; gap: 12px; }
+  #ygo .download-btn {
+    background: var(--turf-dark); color: var(--chalk); padding: 12px 20px; border-radius: 3px; font-weight: 700; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  #ygo .download-btn:hover { background: var(--turf-mid); }
+  #ygo .reset-btn { background: transparent; color: #6b675c; font-size: 14px; text-decoration: underline; padding: 8px; }
+  #ygo .reset-btn:hover { color: var(--scoreboard); }
+
+  #ygo .empty-cell { color: #55584a; }
+</style>
+
+<div id="ygo">
+  <div class="hero">
+    <div class="eyebrow">Backyard Field Day &middot; Scheduling Made Simple</div>
+    <h1>YARD GAME<br/>OLYMPICS</h1>
+    <p>Set your teams and games below. We'll build a fair schedule where everyone plays everyone, and everyone plays every game.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="card">
+      <div class="setup-grid">
+        <div>
+          <label class="field-label" for="ygo-team-count">Teams</label>
+          <div class="radio-row">
+            <label><input type="radio" name="ygo-team-mode" value="count" checked /> Just tell me how many</label>
+            <label><input type="radio" name="ygo-team-mode" value="names" /> I'll name them</label>
+          </div>
+          <div id="ygo-team-count-wrap">
+            <input type="number" id="ygo-team-count" min="2" max="60" value="10" />
+            <div class="helptext">We'll call them Team 1, Team 2, and so on.</div>
+          </div>
+          <div id="ygo-team-names-wrap" style="display:none;">
+            <div class="add-row">
+              <input type="text" id="ygo-team-name-input" placeholder="e.g. The Cornhole Crushers" />
+              <button id="ygo-team-add-btn" type="button">Add</button>
+            </div>
+            <div class="chips" id="ygo-team-chips"></div>
+            <div class="helptext">Add each team name one at a time, or press Enter.</div>
+          </div>
+        </div>
+
+        <div>
+          <label class="field-label" for="ygo-game-name-input">Games</label>
+          <div class="add-row">
+            <input type="text" id="ygo-game-name-input" placeholder="e.g. Cornhole" />
+            <button id="ygo-game-add-btn" type="button">Add</button>
+          </div>
+          <div class="chips" id="ygo-game-chips"></div>
+          <div class="helptext">These default to a classic backyard lineup &mdash; remove or add your own.</div>
+        </div>
+      </div>
+
+      <button class="generate-btn" id="ygo-generate-btn">Build the Schedule</button>
+      <div id="ygo-error" style="display:none;" class="error-msg"></div>
+    </div>
+
+    <div class="results" id="ygo-results" style="display:none;">
+      <div class="status-row" id="ygo-status-row"></div>
+
+      <div class="tabs" id="ygo-tabs">
+        <button class="tab-btn active" data-tab="schedule" type="button">Schedule</button>
+        <button class="tab-btn" data-tab="games" type="button">Games per Team</button>
+        <button class="tab-btn" data-tab="matchups" type="button">Head-to-Head</button>
+      </div>
+      <div class="board">
+        <table id="ygo-table"></table>
+      </div>
+
+      <div class="board-actions">
+        <button class="download-btn" id="ygo-download-btn" type="button">&#8681; Download Excel File</button>
+        <button class="reset-btn" id="ygo-reset-btn" type="button">Edit teams &amp; games</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // ============================================================
+  // Scheduling logic (identical algorithm to the Python version)
+  // ============================================================
+  function mulberry32(seed) {
+    let s = seed >>> 0;
+    return function () {
+      s |= 0; s = (s + 0x6D2B79F5) | 0;
+      let t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function roundRobinRounds(teamsIn) {
+    let arr = teamsIn.slice();
+    if (arr.length % 2 === 1) arr.push("BYE");
+    const n = arr.length;
+    const rounds = [];
+    for (let r = 0; r < n - 1; r++) {
+      const pairs = [];
+      for (let i = 0; i < n / 2; i++) {
+        const t1 = arr[i], t2 = arr[n - 1 - i];
+        if (t1 !== "BYE" && t2 !== "BYE") pairs.push([t1, t2]);
+      }
+      rounds.push(pairs);
+      arr = [arr[0], arr[arr.length - 1], ...arr.slice(1, arr.length - 1)];
+    }
+    return rounds;
+  }
+
+  function assignRound(matches, games, teamGameCount, gameCount, rng) {
+    const numMatches = matches.length;
+    const numGames = games.length;
+    const cap = Math.ceil(numMatches / numGames);
+
+    const candidates = [];
+    matches.forEach(([t1, t2], mi) => {
+      if (!teamGameCount[t1]) teamGameCount[t1] = Object.fromEntries(games.map(g => [g, 0]));
+      if (!teamGameCount[t2]) teamGameCount[t2] = Object.fromEntries(games.map(g => [g, 0]));
+      const c1 = teamGameCount[t1], c2 = teamGameCount[t2];
+      games.forEach(g => {
+        const score = (c1[g] === 0 ? 1 : 0) + (c2[g] === 0 ? 1 : 0);
+        const pairRepeats = c1[g] + c2[g];
+        candidates.push({ score, pairRepeats, gc: gameCount[g], mi, g, rand: rng() });
+      });
+    });
+
+    candidates.sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      if (a.pairRepeats !== b.pairRepeats) return a.pairRepeats - b.pairRepeats;
+      if (a.gc !== b.gc) return a.gc - b.gc;
+      return a.rand - b.rand;
+    });
+
+    const assigned = {};
+    const usesThisRound = Object.fromEntries(games.map(g => [g, 0]));
+    for (const c of candidates) {
+      if (assigned[c.mi] !== undefined) continue;
+      if (usesThisRound[c.g] >= cap) continue;
+      assigned[c.mi] = c.g;
+      usesThisRound[c.g] += 1;
+      if (Object.keys(assigned).length === numMatches) break;
+    }
+
+    const roundOut = [];
+    matches.forEach(([t1, t2], mi) => {
+      const g = assigned[mi];
+      teamGameCount[t1][g] += 1;
+      teamGameCount[t2][g] += 1;
+      gameCount[g] += 1;
+      roundOut.push([t1, t2, g]);
+    });
+    return roundOut;
+  }
+
+  function assignGames(rounds, games, seed) {
+    const rng = mulberry32(seed);
+    const teamGameCount = {};
+    const gameCount = Object.fromEntries(games.map(g => [g, 0]));
+    const schedule = [];
+    for (const roundMatches of rounds) {
+      schedule.push(assignRound(roundMatches, games, teamGameCount, gameCount, rng));
+    }
+    return { schedule, teamGameCount, gameCount };
+  }
+
+  function balanceScore(teamGameCount, teams, games) {
+    let total = 0;
+    for (const t of teams) {
+      const counts = games.map(g => (teamGameCount[t] ? teamGameCount[t][g] || 0 : 0));
+      total += Math.max(...counts) - Math.min(...counts);
+    }
+    return total;
+  }
+
+  function bestGameAssignment(rounds, games, teams, attempts) {
+    let best = null;
+    let bestKey = [Infinity, Infinity];
+    for (let seed = 0; seed < attempts; seed++) {
+      const { schedule, teamGameCount, gameCount } = assignGames(rounds, games, seed);
+      let missingTotal = 0;
+      for (const t of teams) {
+        for (const g of games) {
+          if (!teamGameCount[t] || teamGameCount[t][g] === 0) missingTotal++;
+        }
+      }
+      const bScore = balanceScore(teamGameCount, teams, games);
+      const key = [missingTotal, bScore];
+      if (key[0] < bestKey[0] || (key[0] === bestKey[0] && key[1] < bestKey[1])) {
+        best = { schedule, teamGameCount, gameCount };
+        bestKey = key;
+      }
+      if (bestKey[0] === 0 && bestKey[1] <= 1) break;
+    }
+    return best;
+  }
+
+  function addMakeupRounds(schedule, teamGameCount, gameCount, teams, games, maxRounds) {
+    const rr = roundRobinRounds(teams);
+    const rng = mulberry32(0);
+    let idx = 0;
+    let guard = 0;
+    const stillMissing = () =>
+      teams.some(t => games.some(g => !teamGameCount[t] || teamGameCount[t][g] === 0));
+    while (stillMissing() && guard < maxRounds) {
+      const pairs = rr[idx % rr.length];
+      idx++;
+      const roundOut = assignRound(pairs, games, teamGameCount, gameCount, rng);
+      schedule.push(roundOut);
+      guard++;
+    }
+    return schedule;
+  }
+
+  function buildGrid(schedule, games) {
+    return schedule.map((roundMatches, i) => {
+      const row = { Round: i + 1 };
+      const cellMatches = Object.fromEntries(games.map(g => [g, []]));
+      for (const [t1, t2, g] of roundMatches) cellMatches[g].push(`${t1} vs ${t2}`);
+      for (const g of games) row[g] = cellMatches[g].join("; ");
+      return row;
+    });
+  }
+
+  function teamGameCountsFn(schedule, teams, games) {
+    const counts = Object.fromEntries(teams.map(t => [t, Object.fromEntries(games.map(g => [g, 0]))]));
+    for (const roundMatches of schedule) {
+      for (const [t1, t2, g] of roundMatches) {
+        counts[t1][g] += 1;
+        counts[t2][g] += 1;
+      }
+    }
+    return counts;
+  }
+
+  function matchupCountsFn(schedule, teams) {
+    const counts = Object.fromEntries(teams.map(t1 => [t1, Object.fromEntries(teams.map(t2 => [t2, 0]))]));
+    for (const roundMatches of schedule) {
+      for (const [t1, t2] of roundMatches) {
+        counts[t1][t2] += 1;
+        counts[t2][t1] += 1;
+      }
+    }
+    return counts;
+  }
+
+  function validateSchedule(schedule, teams, games) {
+    const played = Object.fromEntries(teams.map(t => [t, new Set()]));
+    const matchCounts = Object.fromEntries(teams.map(t => [t, 0]));
+    const matchups = new Set();
+
+    for (const roundMatches of schedule) {
+      for (const [t1, t2, g] of roundMatches) {
+        played[t1].add(g);
+        played[t2].add(g);
+        matchCounts[t1]++;
+        matchCounts[t2]++;
+        matchups.add([t1, t2].sort().join("||"));
+      }
+    }
+
+    const allPairs = [];
+    for (let i = 0; i < teams.length; i++)
+      for (let j = i + 1; j < teams.length; j++)
+        allPairs.push([teams[i], teams[j]].sort().join("||"));
+    const missingMatchups = allPairs.filter(p => !matchups.has(p));
+
+    const missingGames = {};
+    for (const t of teams) {
+      const missing = games.filter(g => !played[t].has(g));
+      if (missing.length) missingGames[t] = missing;
+    }
+
+    const doubleBooked = [];
+    schedule.forEach((roundMatches, i) => {
+      const counts = {};
+      for (const [, , g] of roundMatches) counts[g] = (counts[g] || 0) + 1;
+      for (const g in counts) if (counts[g] > 1) doubleBooked.push([i + 1, g, counts[g]]);
+    });
+
+    const matchCountValues = Object.values(matchCounts);
+    const equalMatches = new Set(matchCountValues).size === 1;
+
+    return { matchCounts, equalMatches, missingMatchups, missingGames, doubleBooked };
+  }
+
+  function generateSchedule(teams, games) {
+    const attempts = teams.length * games.length > 400 ? 60 : 200;
+    const rounds = roundRobinRounds(teams);
+    let { schedule, teamGameCount, gameCount } = bestGameAssignment(rounds, games, teams, attempts);
+    const stillMissing = teams.some(t => games.some(g => !teamGameCount[t] || teamGameCount[t][g] === 0));
+    if (stillMissing) {
+      schedule = addMakeupRounds(schedule, teamGameCount, gameCount, teams, games, 200);
+    }
+    const grid = buildGrid(schedule, games);
+    const tg = teamGameCountsFn(schedule, teams, games);
+    const mm = matchupCountsFn(schedule, teams);
+    const val = validateSchedule(schedule, teams, games);
+    return { schedule, grid, tg, mm, val };
+  }
+
+  // ============================================================
+  // UI wiring
+  // ============================================================
+  const DEFAULT_GAMES = ["Paddle Smash", "Cornhole", "Can Jam", "Golf", "Axe Throwing", "Texas Horseshoe"];
+
+  const el = (id) => document.getElementById(id);
+  let gameList = DEFAULT_GAMES.slice();
+  let customTeamNames = [];
+  let lastResult = null;
+  let lastTeams = [];
+  let lastGames = [];
+  let activeTab = "schedule";
+
+  function renderChips(containerId, list, onRemove) {
+    const box = el(containerId);
+    box.innerHTML = "";
+    list.forEach((name, idx) => {
+      const chip = document.createElement("span");
+      chip.className = "chip";
+      const label = document.createElement("span");
+      label.textContent = name;
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("aria-label", `Remove ${name}`);
+      btn.textContent = "\u00d7";
+      btn.addEventListener("click", () => onRemove(idx));
+      chip.appendChild(label);
+      chip.appendChild(btn);
+      box.appendChild(chip);
+    });
+  }
+
+  function renderGameChips() {
+    renderChips("ygo-game-chips", gameList, (idx) => {
+      gameList.splice(idx, 1);
+      renderGameChips();
+    });
+  }
+
+  function renderTeamChips() {
+    renderChips("ygo-team-chips", customTeamNames, (idx) => {
+      customTeamNames.splice(idx, 1);
+      renderTeamChips();
+    });
+  }
+
+  el("ygo-game-add-btn").addEventListener("click", addGameFromInput);
+  el("ygo-game-name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addGameFromInput(); } });
+  function addGameFromInput() {
+    const input = el("ygo-game-name-input");
+    const val = input.value.trim();
+    if (!val) return;
+    if (gameList.some(g => g.toLowerCase() === val.toLowerCase())) { input.value = ""; return; }
+    gameList.push(val);
+    input.value = "";
+    renderGameChips();
+  }
+
+  el("ygo-team-add-btn").addEventListener("click", addTeamFromInput);
+  el("ygo-team-name-input").addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addTeamFromInput(); } });
+  function addTeamFromInput() {
+    const input = el("ygo-team-name-input");
+    const val = input.value.trim();
+    if (!val) return;
+    if (customTeamNames.some(t => t.toLowerCase() === val.toLowerCase())) { input.value = ""; return; }
+    customTeamNames.push(val);
+    input.value = "";
+    renderTeamChips();
+  }
+
+  document.querySelectorAll('input[name="ygo-team-mode"]').forEach(radio => {
+    radio.addEventListener("change", (e) => {
+      const useNames = e.target.value === "names";
+      el("ygo-team-count-wrap").style.display = useNames ? "none" : "block";
+      el("ygo-team-names-wrap").style.display = useNames ? "block" : "none";
+    });
+  });
+
+  function showError(msg) {
+    const box = el("ygo-error");
+    box.textContent = msg;
+    box.style.display = "block";
+  }
+  function clearError() {
+    el("ygo-error").style.display = "none";
+  }
+
+  function getTeams() {
+    const mode = document.querySelector('input[name="ygo-team-mode"]:checked').value;
+    if (mode === "names") return customTeamNames.slice();
+    const n = parseInt(el("ygo-team-count").value, 10);
+    if (!n || n < 2) return [];
+    return Array.from({ length: n }, (_, i) => `Team ${i + 1}`);
+  }
+
+  el("ygo-generate-btn").addEventListener("click", () => {
+    clearError();
+    const teams = getTeams();
+    const games = gameList.slice();
+
+    if (teams.length < 2) {
+      showError("Add at least 2 teams before building a schedule.");
+      return;
+    }
+    if (games.length < 1) {
+      showError("Add at least 1 game before building a schedule.");
+      return;
+    }
+    const uniqueTeams = new Set(teams.map(t => t.toLowerCase()));
+    if (uniqueTeams.size !== teams.length) {
+      showError("Team names need to be unique — two teams have the same name.");
+      return;
+    }
+
+    const btn = el("ygo-generate-btn");
+    btn.disabled = true;
+    btn.textContent = "Building\u2026";
+
+    setTimeout(() => {
+      try {
+        const result = generateSchedule(teams, games);
+        lastResult = result;
+        lastTeams = teams;
+        lastGames = games;
+        renderResults(result, teams, games);
+        el("ygo-results").style.display = "block";
+        el("ygo-results").scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (err) {
+        showError("Something went wrong building the schedule: " + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Build the Schedule";
+      }
+    }, 20);
+  });
+
+  el("ygo-reset-btn").addEventListener("click", () => {
+    el("ygo-results").style.display = "none";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  el("ygo-tabs").addEventListener("click", (e) => {
+    const btn = e.target.closest(".tab-btn");
+    if (!btn) return;
+    activeTab = btn.dataset.tab;
+    document.querySelectorAll("#ygo-tabs .tab-btn").forEach(b => b.classList.toggle("active", b === btn));
+    renderTable();
+  });
+
+  function renderResults(result, teams, games) {
+    const { val } = result;
+    const statusRow = el("ygo-status-row");
+    statusRow.innerHTML = "";
+
+    const pills = [];
+    pills.push({
+      ok: val.missingMatchups.length === 0,
+      okText: "Every team plays every other team",
+      warnText: `${val.missingMatchups.length} matchup(s) missing`
+    });
+    pills.push({
+      ok: Object.keys(val.missingGames).length === 0,
+      okText: "Every team plays every game",
+      warnText: `${Object.keys(val.missingGames).length} team(s) missing a game`
+    });
+    pills.push({
+      ok: val.equalMatches,
+      okText: "Everyone plays the same number of matches",
+      warnText: "Match counts aren't perfectly equal"
+    });
+
+    pills.forEach(p => {
+      const pill = document.createElement("span");
+      pill.className = "status-pill " + (p.ok ? "ok" : "warn");
+      pill.textContent = (p.ok ? "\u2713 " : "\u26a0 ") + (p.ok ? p.okText : p.warnText);
+      statusRow.appendChild(pill);
+    });
+
+    if (val.doubleBooked.length) {
+      const pill = document.createElement("span");
+      pill.className = "status-pill info";
+      const roundsAffected = new Set(val.doubleBooked.map(d => d[0])).size;
+      pill.textContent = `\u2139 ${roundsAffected} round(s) need extra stations for a game (more matches than games at once)`;
+      statusRow.appendChild(pill);
+    }
+
+    renderTable();
+  }
+
+  function renderTable() {
+    if (!lastResult) return;
+    const table = el("ygo-table");
+    const { grid, tg, mm } = lastResult;
+
+    let html = "";
+    if (activeTab === "schedule") {
+      html += "<thead><tr><th>Round</th>" + lastGames.map(g => `<th>${escapeHtml(g)}</th>`).join("") + "</tr></thead><tbody>";
+      grid.forEach(row => {
+        html += `<tr><td class="rowhead">${row.Round}</td>`;
+        lastGames.forEach(g => {
+          const val = row[g];
+          html += `<td>${val ? escapeHtml(val) : '<span class="empty-cell">\u2014</span>'}</td>`;
+        });
+        html += "</tr>";
+      });
+      html += "</tbody>";
+    } else if (activeTab === "games") {
+      html += "<thead><tr><th>Team</th>" + lastGames.map(g => `<th>${escapeHtml(g)}</th>`).join("") + "</tr></thead><tbody>";
+      lastTeams.forEach(t => {
+        html += `<tr><td class="rowhead">${escapeHtml(t)}</td>`;
+        lastGames.forEach(g => { html += `<td class="num">${tg[t][g]}</td>`; });
+        html += "</tr>";
+      });
+      html += "</tbody>";
+    } else if (activeTab === "matchups") {
+      html += "<thead><tr><th>Team</th>" + lastTeams.map(t => `<th>${escapeHtml(t)}</th>`).join("") + "</tr></thead><tbody>";
+      lastTeams.forEach(t1 => {
+        html += `<tr><td class="rowhead">${escapeHtml(t1)}</td>`;
+        lastTeams.forEach(t2 => {
+          const val = t1 === t2 ? "\u2014" : mm[t1][t2];
+          html += `<td class="num">${val}</td>`;
+        });
+        html += "</tr>";
+      });
+      html += "</tbody>";
+    }
+    table.innerHTML = html;
+  }
+
+  function escapeHtml(str) {
+    const d = document.createElement("div");
+    d.textContent = str;
+    return d.innerHTML;
+  }
+
+  el("ygo-download-btn").addEventListener("click", () => {
+    if (!lastResult) return;
+    const { grid, tg, mm } = lastResult;
+    const wb = XLSX.utils.book_new();
+
+    const scheduleAOA = [["Round", ...lastGames], ...grid.map(row => [row.Round, ...lastGames.map(g => row[g])])];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(scheduleAOA), "Schedule");
+
+    const tgAOA = [["Team", ...lastGames], ...lastTeams.map(t => [t, ...lastGames.map(g => tg[t][g])])];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(tgAOA), "Team-Game Counts");
+
+    const mmAOA = [["Team", ...lastTeams], ...lastTeams.map(t1 => [t1, ...lastTeams.map(t2 => (t1 === t2 ? 0 : mm[t1][t2]))])];
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(mmAOA), "Team Matchup Counts");
+
+    XLSX.writeFile(wb, "yard_game_olympics_schedule.xlsx");
+  });
+
+  // init
+  renderGameChips();
+  renderTeamChips();
+})();
+</script>
